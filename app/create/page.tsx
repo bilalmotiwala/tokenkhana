@@ -77,6 +77,11 @@ contract ${name ? name : "{{tokenName}}"} is ERC20${isBurnable ? `, ERC20Burnabl
     
   function unpause() public onlyOwner {
     _unpause();
+  }
+    
+  // Required Solidity Overrides
+  function _update(address from, address to, uint256 value) internal override(ERC20, ERC20Pausable) {
+    super._update(from, to, value);
   }` : ""}
 }`.trim();
 
