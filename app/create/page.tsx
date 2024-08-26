@@ -56,13 +56,16 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol"; // Base Ownable contract.
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol"; // Base ERC20 contract. ${isBurnable ? `
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // Base ERC20Burnable contract.` : ""} ${isPausable ? `
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol"; // Base ERC20Pausable contract.` : ""}
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol"; // Base ERC20Pausable contract.` : ""} ${isPermissable ? `
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol"; // Base ERC20Permit contract.` : ""}
 
-contract ${name ? name : "{{tokenName}}"} is ERC20${isBurnable ? `, ERC20Burnable,`: ","} Ownable { ${isLimitedSupply && totalSupply > 0 ? `
+contract ${name ? name : "{{tokenName}}"} is ERC20,${isBurnable ? ` ERC20Burnable,`: ""}${isPausable ? ` ERC20Pausable,` : ""}${isPermissable ? ` ERC20Permit,` : ""} Ownable { ${isLimitedSupply && totalSupply > 0 ? `
   uint256 public constant MAX_SUPPLY = ${totalSupply} * 10 ** decimals(); // Total maximum supply of tokens.
   ` : ""}
   constructor(address initialOwner)
     ERC20("${name ? name : "{{tokenName}}"}", "${symbol ? symbol : "{{tokenSymbol}}"}")
+    Ownable(initialOwner) ${isPermissable ? `
+      ERC20Permit(${name ? name : "{{tokenName}}"})` : ""}
   ${!initialSupply ? "{}" : `{
     _mint(msg.sender, ${initialSupply} * 10 ** decimals());
   }`}
@@ -201,13 +204,23 @@ contract ${name ? name : "{{tokenName}}"} is ERC20${isBurnable ? `, ERC20Burnabl
                   </div>
                 )}
               </AccordionItem>
-              <AccordionItem key="4" aria-label="Upgradable" title={<span className="font-semibold">Upgradable</span>} subtitle="Your wallet will be able to update and upgrade the token contract in the future." startContent={<GiArmorUpgrade size={25} />} className="text-left">
-                {defaultContent}
+              <AccordionItem key="4" aria-label="Permissable" title={<span className="font-semibold">Permissable</span>} subtitle="Allow token holders to authorise third party gas-free transfers." startContent={<FaExchangeAlt size={25} />} className="text-left">
+                <div className="w-full flex flex-row pl-9 pr-4 pb-5 gap-2 items-center justify-center">
+                  <div className="w-full flex flex-row">
+                    Enable Permissioned Transfers <Switch size="sm" isSelected={isPermissable} onValueChange={setIsPermissable} className="ml-2"/>
+                  </div>
+                </div>
+                {isPermissable ? (
+                  <div className="w-full flex px-9 pb-5">
+                    Token holders can allow third parties to access and transfer their tokens in a gas-free manner.
+                  </div>
+                ) : (
+                  <div className="w-full flex px-9 pb-5">
+                    Token holders cannot allow third parties to access and transfer their tokens in a gas-free manner.
+                  </div>
+                )}
               </AccordionItem>
-              <AccordionItem key="5" aria-label="Permissable" title={<span className="font-semibold">Permissable</span>} subtitle="Allow token holders to authorise third party gas-free transfers." startContent={<FaExchangeAlt size={25} />} className="text-left">
-                {defaultContent}
-              </AccordionItem>
-              <AccordionItem key="6" aria-label="Flash Minting" title={<span className="flex font-semibold items-center">Flash Minting <PiWarningDuotone className="ml-1.5"/></span>} subtitle="Allows built-in non-collateral lending as long as tokens returned within the same transaction." startContent={<FaBong size={25} />} className="text-left">
+              <AccordionItem isDisabled key="5" aria-label="Upgradable" title={<span className="flex items-center font-semibold">Upgradable <div className="ml-1.5 bg-zinc-600 rounded-md text-xs px-3 py-1">Coming Soon</div></span>} subtitle="Your wallet will be able to update and upgrade the token contract in the future." startContent={<GiArmorUpgrade size={25} />} className="text-left">
                 {defaultContent}
               </AccordionItem>
             </Accordion>
