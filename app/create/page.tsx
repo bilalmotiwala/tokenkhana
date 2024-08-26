@@ -8,7 +8,7 @@ import { FaLeaf, FaFireAlt, FaPauseCircle, FaExchangeAlt, FaBong } from "react-i
 import { PiWarningDuotone } from "react-icons/pi";
 import { GiArmorUpgrade } from "react-icons/gi";
 
-export default function AboutPage() {
+export default function CreatePage() {
   // Creating the variables for our form inputs.
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("");
@@ -55,7 +55,8 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol"; // Base Ownable contract.
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol"; // Base ERC20 contract. ${isBurnable ? `
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // Base ERC20Burnable contract.` : ""}
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // Base ERC20Burnable contract.` : ""} ${isPausable ? `
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol"; // Base ERC20Pausable contract.` : ""}
 
 contract ${name ? name : "{{tokenName}}"} is ERC20${isBurnable ? `, ERC20Burnable,`: ","} Ownable { ${isLimitedSupply && totalSupply > 0 ? `
   uint256 public constant MAX_SUPPLY = ${totalSupply} * 10 ** decimals(); // Total maximum supply of tokens.
@@ -69,6 +70,13 @@ contract ${name ? name : "{{tokenName}}"} is ERC20${isBurnable ? `, ERC20Burnabl
   function mint(address to, uint256 amount) public onlyOwner {
     ${isLimitedSupply && totalSupply > 0 ? `require(totalSupply() + (amount * 10 ** decimals())  <= MAX_SUPPLY, "Minting would exceed max supply");
     _mint(to, amount * 10 ** decimals());` : `_mint(to, amount * 10 ** decimals());`}
+  }` : ""} ${isPausable ? `
+  function pause() public onlyOwner {
+    _pause();
+  }
+    
+  function unpause() public onlyOwner {
+    _unpause();
   }` : ""}
 }`.trim();
 
@@ -173,7 +181,20 @@ contract ${name ? name : "{{tokenName}}"} is ERC20${isBurnable ? `, ERC20Burnabl
                 )}
               </AccordionItem>
               <AccordionItem key="3" aria-label="Pausable" title={<span className="font-semibold">Pausable</span>} subtitle="Your wallet will be able to pause all transfers." startContent={<FaPauseCircle size={25} />} className="text-left">
-                {defaultContent}
+                <div className="w-full flex flex-row pl-9 pr-4 pb-5 gap-2 items-center justify-center">
+                  <div className="w-full flex flex-row">
+                    Enable Pausing <Switch size="sm" isSelected={isPausable} onValueChange={setIsPausable} className="ml-2"/>
+                  </div>
+                </div>
+                {isPausable ? (
+                  <div className="w-full flex px-9 pb-5">
+                    Token transfers for this token may be paused by your wallet in the future.
+                  </div>
+                ) : (
+                  <div className="w-full flex px-9 pb-5">
+                    Token transfers for this token cannot be paused.
+                  </div>
+                )}
               </AccordionItem>
               <AccordionItem key="4" aria-label="Upgradable" title={<span className="font-semibold">Upgradable</span>} subtitle="Your wallet will be able to update and upgrade the token contract in the future." startContent={<GiArmorUpgrade size={25} />} className="text-left">
                 {defaultContent}
