@@ -1,6 +1,5 @@
 "use client";
-
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { SwitchProps, useSwitch } from "@nextui-org/switch";
 import { useTheme } from "next-themes";
@@ -38,8 +37,8 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
     onChange,
   });
 
-  return (
-    <Component
+  const renderSwitch = (children: ReactNode) => (
+    <div
       {...getBaseProps({
         className: clsx(
           "px-px transition-opacity hover:opacity-80 cursor-pointer",
@@ -48,6 +47,12 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
         ),
       })}
     >
+      {children}
+    </div>
+  );
+
+  return renderSwitch(
+    <>
       <VisuallyHidden>
         <input {...getInputProps()} />
       </VisuallyHidden>
@@ -76,6 +81,6 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
           <MoonFilledIcon size={22} />
         )}
       </div>
-    </Component>
+    </>
   );
 };
