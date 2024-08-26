@@ -1,3 +1,4 @@
+"use client";
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -10,6 +11,7 @@ import {
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import { link as linkStyles } from "@nextui-org/theme";
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Code} from "@nextui-org/react";
 import NextLink from "next/link";
 import clsx from "clsx";
 
@@ -23,6 +25,7 @@ import {
 } from "@/components/icons";
 
 export const Navbar = () => {
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -68,15 +71,35 @@ export const Navbar = () => {
         </NavbarItem>
         <NavbarItem className="hidden md:flex">
           <Button
-            isExternal
-            as={Link}
+            onPress={onOpen}
             className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
             startContent={<HeartFilledIcon className="text-danger" />}
             variant="flat"
           >
             Support
           </Button>
+          <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">Support</ModalHeader>
+                  <ModalBody>
+                    <p className="text-center">
+                      Share this around and refer me to potential opportunities in web3.<br/><br/>You can always get me coffee so I stay caffinated and build more awesome projects.<br/><br/>
+                    </p>
+                    <p className="text-center">
+                      <Code>0xe3eaeC7B43aB9Ecae24C3ed3aEf28eC303979371</Code>
+                    </p>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="primary" onPress={onClose}>
+                      Close
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
         </NavbarItem>
       </NavbarContent>
 

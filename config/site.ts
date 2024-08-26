@@ -24,9 +24,9 @@ export const siteConfig = {
     // },
   ],
   links: {
-    github: "https://github.com/Tokenkhana/tokenkhana-dapp",
+    github: "https://github.com/bilalmotiwala/tokenkhana",
     twitter: "https://x.com/mbilalmotiwala",
-    docs: "https://github.com/Tokenkhana/tokenkhana-dapp/wiki",
+    docs: "https://github.com/bilalmotiwala/tokenkhana/wiki",
     discord: "https://discord.gg/9b6yyZKmH4",
     sponsor: "https://patreon.com/jrgarciadev",
   },
