@@ -1,14 +1,17 @@
 "use client";
 import { title } from "@/components/primitives";
 import { Fragment, useState } from "react";
-import { Input } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import { Accordion, AccordionItem, Select, SelectItem, Switch } from "@nextui-org/react";
 
 import { FaLeaf, FaFireAlt, FaPauseCircle, FaExchangeAlt, FaBong } from "react-icons/fa";
-import { PiWarningDuotone } from "react-icons/pi";
 import { GiArmorUpgrade } from "react-icons/gi";
 
+import { useWeb3Modal } from '@web3modal/wagmi/react';
+
 export default function CreatePage() {
+  const { open, close } = useWeb3Modal();
+
   // Creating the variables for our form inputs.
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("");
@@ -23,7 +26,6 @@ export default function CreatePage() {
   const [isPausable, setIsPausable] = useState(false);
   const [isPermissable, setIsPermissable] = useState(false);
   const [isFlashMintable, setIsFlashMintable] = useState(false);
-
   const [isUpgradable, setIsUpgradable] = useState(false);
 
   // Creating the list of chains available.
@@ -228,10 +230,15 @@ contract ${name ? name : "{{tokenName}}"} is ERC20,${isBurnable ? ` ERC20Burnabl
         </form>
 
         {/* Creating the code preview*/}
-        <div className="flex items-center justify-center text-left overflow-x-scroll w-full h-full">
+        <div className="flex flex-col items-center justify-center text-left overflow-x-scroll w-full h-full">
           <div className="w-full p-6 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-[monospace] text-left text-nowrap overflow-x-scroll h-full min-h-[400px]">
             {/* Adding the code to show within the code preview with the line breaks as needed. */}
             {preserveLinebreaks(baseContractTemplate)}
+          </div>
+
+          <div className="w-full flex flex-row gap-4 text-center mt-4">
+            <Button className="w-full rounded-lg text-lg font-semibold" size="lg" color="secondary" onClick={() => open()}>Connect Wallet</Button>
+            {/* <Button className="w-full rounded-lg text-lg font-semibold" size="lg" color="secondary">Create Token</Button> */}
           </div>
         </div>
       </div>
